@@ -4,36 +4,48 @@ import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.service.autofill.Dataset
 import android.util.Log
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniel.padilla.compactpos.R
@@ -62,32 +75,40 @@ import com.daniel.padilla.compactpos.ui.theme.textFieldColor
 import com.daniel.padilla.compactpos.ui.viewModels.NuevoProductoViewModel
 import com.deoslv.bancaribe.utils.CurrencyAmountInputVisualTransformation
 import com.nextgo.disconnect.ui.layout.ButtonLayout
-import kotlinx.coroutines.launch
 import java.io.File
 import java.util.concurrent.Executor
 
-@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun NuevoProductoScreen(
     navController: NavController,
     viewModel: NuevoProductoViewModel = hiltViewModel()
 ){
 
-    val uri = remember{ mutableStateOf<Uri?>(null)}
-
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
 
         if (result.resultCode == Activity.RESULT_OK){
-            val uri = result.data?.data!!
-            val source = ImageDecoder.createSource(viewModel.getContext().contentResolver, uri)
-            val bitmap = ImageDecoder.decodeBitmap(source)
 
-            viewModel.setImageBitmap(bitmap)
+            val data = result.data
+            val imageUri = data?.data
 
+            if (imageUri != null) { // GALERIA
+
+                val source = ImageDecoder.createSource(viewModel.getContext().contentResolver, imageUri)
+                val bitmap = ImageDecoder.decodeBitmap(source)
+
+                viewModel.setImageBitmap(bitmap)
+
+            } else {  // CAMARA
+
+                val thumbnail = data?.extras?.get("data") as? Bitmap
+                if (thumbnail != null) {
+                    viewModel.setImageBitmap(thumbnail)
+                }
+
+            }
         }
-
     }
 
     val scrollState = rememberScrollState()
@@ -121,11 +142,11 @@ fun NuevoProductoScreen(
                 isNewProductOrToModifier = true
             ) {
 
-
+                viewModel.getImage(launcher)
 
             }
             Column(modifier = Modifier
-                .weight(2F)
+                .weight(1F)
                 .padding(15.dp)) {
 
                 Column(modifier = Modifier

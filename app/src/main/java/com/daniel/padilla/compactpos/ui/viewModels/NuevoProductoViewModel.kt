@@ -3,6 +3,10 @@ package com.daniel.padilla.compactpos.ui.viewModels
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
+import android.provider.MediaStore
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
 import androidx.core.content.contentValuesOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -97,7 +101,21 @@ class NuevoProductoViewModel @Inject constructor(
             _productName.value = value
     }
 
+    fun getImage(launcher: ManagedActivityResultLauncher<Intent, ActivityResult>){
 
+        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
+        // Crear el Selector
+        val chooserIntent = Intent.createChooser(galleryIntent, "Selecciona una opción")
+
+        // La cámara como una opción extra en el mismo menú
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent))
+
+        launcher.launch(chooserIntent)
+
+    }
 
 }
 

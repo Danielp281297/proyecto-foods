@@ -37,7 +37,8 @@ fun ProductoImage(
     onClick: () -> Unit
 ){
 
-    Box(modifier = modifier) {
+    Box(modifier = modifier,
+        contentAlignment = Alignment.Center) {
 
         if (bitmap != null) {
             Image(
