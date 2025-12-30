@@ -52,6 +52,16 @@ dependencies {
     // REALM DATABASE
     implementation(libs.kotlin.library.base)
 
+    // CAMERA X
+    val cameraxVersion = "1.4.1"
+    implementation ("androidx.camera:camera-core:${cameraxVersion}")
+    implementation ("androidx.camera:camera-camera2:${cameraxVersion}")
+    implementation ("androidx.camera:camera-view:${cameraxVersion}")
+    implementation ("androidx.camera:camera-lifecycle:$cameraxVersion")
+
+    //Permissions
+    implementation(libs.accompanist.permissions)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
