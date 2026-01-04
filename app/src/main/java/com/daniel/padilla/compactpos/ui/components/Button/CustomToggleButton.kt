@@ -1,8 +1,7 @@
-package com.daniel.padilla.compactpos.ui.components.button
+package com.daniel.padilla.compactpos.ui.components.Button
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.daniel.padilla.compactpos.ui.screens.NuevoProducto.SubtitleGlobal
+import com.daniel.padilla.compactpos.ui.components.Text.SubtitleGlobal
 
 @Composable
 fun CustomToggleButton(
@@ -29,7 +28,7 @@ fun CustomToggleButton(
     selectedItem: String,
     dataset: List<String>,
     cornerPercent: Int = 50,
-    onClick: (String) -> Unit
+    onClick: (String, Int) -> Unit
 ){
 
     Column {
@@ -65,7 +64,7 @@ fun CustomToggleButton(
                         .weight(1F)
                         .clip(RoundedCornerShape(percent = cornerPercent))
                         .clickable {
-                            onClick(it)
+                            onClick(it, dataset.indexOf(it))
                         },
                     color = backgroundColor.value
                 ) {

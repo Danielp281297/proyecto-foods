@@ -10,11 +10,12 @@ import androidx.navigation.NavController
 @Composable
 fun MainLayout(
     navController: NavController,
+    floatingActionButton: @Composable () -> Unit = {},
     content: @Composable () -> Unit
 ){
 
     Scaffold(
-
+        floatingActionButton = floatingActionButton
     ) {
 
         Box(modifier = Modifier.padding(it)){
